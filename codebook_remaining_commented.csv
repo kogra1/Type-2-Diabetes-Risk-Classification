@@ -1,0 +1,248 @@
+var,label,file,missing_%,keep,comment
+ALQ101,Had at least 12 alcohol drinks/1 yr?,ALQ_H,8.1,yes,"Drinker yes/no: base of alcohol consumption, few missing"
+ALQ120Q,How often drink alcohol over past 12 mos,ALQ_H,22,derive,"Skip pattern (NaN = does not drink). Combine ALQ120Q, ALQ120U, ALQ130 into ""drinks per week"", with 0 for non-drinkers"
+ALQ151,Ever have 4/5 or more drinks every day?,ALQ_H,22,no,"Lifetime ""ever 4/5 drinks every day"", little information and redundant"
+ALQ120U,"# days drink alcohol per wk, mo, yr",ALQ_H,37.5,derive,"Skip pattern (NaN = does not drink). Combine ALQ120Q, ALQ120U, ALQ130 into ""drinks per week"", with 0 for non-drinkers"
+ALQ130,Avg # alcoholic drinks/day - past 12 mos,ALQ_H,37.5,derive,"Skip pattern (NaN = does not drink). Combine ALQ120Q, ALQ120U, ALQ130 into ""drinks per week"", with 0 for non-drinkers"
+ALQ141Q,# days have 4/5 drinks - past 12 mos,ALQ_H,37.5,no,"Very specific (days with 4/5 drinks), 37% NaN from skip pattern, redundant with average consumption"
+BMDSTATS,Body Measures Component Status Code,BMX_H,0,no,"Exam status code, not a feature"
+BMXWT,Weight (kg),BMX_H,0.9,no,"Redundant with BMI (BMI = weight/height^2), high collinearity"
+BMXHT,Standing Height (cm),BMX_H,1,derive,"Use it to compute the waist/height ratio, then drop it (otherwise redundant with BMI)"
+BMXBMI,Body Mass Index (kg/m**2),BMX_H,1.1,yes,Main adiposity index and diabetes risk factor
+BMXARMC,Arm Circumference (cm),BMX_H,4,maybe,"Suggest no: Arm circumference: correlated with BMI/waist, little extra information"
+BMXARML,Upper Arm Length (cm),BMX_H,4.1,maybe,"Suggest no: Arm length: skeletal measure, no link with risk"
+BMXWAIST,Waist Circumference (cm),BMX_H,5,maybe,"Suggest yes: Waist circumference: central adiposity, strong predictor and not redundant with BMI"
+BMXLEG,Upper Leg Length (cm),BMX_H,5.2,maybe,"Suggest no: Leg length: skeletal measure, no direct link with risk"
+BMXSAD1,Sagittal Abdominal Diameter 1st (cm),BMX_H,7,maybe,"Suggest no: Single measurement, redundant with the average BMDAVSAD"
+BMXSAD2,Sagittal Abdominal Diameter 2nd (cm),BMX_H,7,maybe,"Suggest no: Single measurement, redundant with the average BMDAVSAD"
+BMDAVSAD,Average Sagittal Abdominal Diameter (cm),BMX_H,7,maybe,"Suggest maybe: Visceral fat, but highly correlated with waist and BMI: keep only one of waist and SAD (I suggest waist)"
+PEASCST1,Blood Pressure Status,BPX_H,0,no,Exam status code
+BPXPULS,Pulse regular or irregular?,BPX_H,3,no,"Regular/irregular pulse flag: technical, almost constant"
+BPXML1,MIL: maximum inflation levels (mm Hg),BPX_H,3,no,Maximum cuff inflation level: technical
+PEASCTM1,Blood Pressure Time in Seconds,BPX_H,3.1,no,Measurement time: technical
+BPXPLS,60 sec. pulse (30 sec. pulse * 2),BPX_H,3.1,maybe,"Resting heart rate, associated with metabolic risk; weak correlation, to be tested"
+BPACSZ,Coded cuff size,BPX_H,3.2,maybe,"Suggest no: Technical measure (cuff size), proxy of arm circumference"
+BPAEN1,Enhancement used first reading,BPX_H,3.2,maybe,Suggest no: Technical flag on use of measurement enhancement
+BPAEN2,Enhancement used second reading,BPX_H,3.2,maybe,Suggest no: Technical flag on use of measurement enhancement
+BPAEN3,Enhancement used third reading,BPX_H,3.2,maybe,Suggest no: Technical flag on use of measurement enhancement
+CBD070,Money spent at supermarket/grocery store,CBQ_H,1.2,no,"Household spending, depends on household size and income; already covered by INDFMPIR"
+CBD090,Money spent on nonfood items,CBQ_H,1.2,no,"Household spending, depends on household size and income; already covered by INDFMPIR"
+CBD110,Money spent on food at other stores,CBQ_H,1.2,no,"Household spending, depends on household size and income; already covered by INDFMPIR"
+CBD120,Money spent on eating out,CBQ_H,1.2,maybe,"Spending on eating out: proxy of eating habits, but overlaps with DBD900/CBQ505"
+CBD130,Money spent on carryout/delivered foods,CBQ_H,1.2,no,"Household spending, depends on household size and income; already covered by INDFMPIR"
+DBQ700,How healthy is the diet,DBQ_H,0,yes,Self-rated diet quality: concise and 0% missing
+DBQ197,Past 30 day milk product consumption,DBQ_H,0,idk,Suggest no: Milk in the past 30 days: weak and ambiguous link with diabetes. I suggest dropping it
+DBQ229,Regular milk use 5 times per week,DBQ_H,0,idk,Suggest no: Milk in the past 30 days: weak and ambiguous link with diabetes. I suggest dropping it
+DBD895,# of meals not home prepared,DBQ_H,0,yes,Meals not prepared at home: good proxy of eating habits
+CBQ596,Heard of My Plate,DBQ_H,0,maybe,"Suggest no: Having heard of MyPlate: awareness, not behavior. I suggest dropping it"
+CBQ505,Eat at fast food/pizza places,DBQ_H,0,no,Redundant with DBD900 (number of fast food meals)
+CBQ550,Eat at restaurants w/ waiter,DBQ_H,0,no,"Restaurants with waiter: weak information, redundant with DBD895"
+DBD905,# of ready-to-eat foods in past 30 days,DBQ_H,0.2,maybe,Ready-to-eat/frozen foods (past 30 days): proxy of processed food intake; 0.2% missing
+DBD910,# of frozen meals/pizza in past 30 days,DBQ_H,0.2,maybe,Ready-to-eat/frozen foods (past 30 days): proxy of processed food intake; 0.2% missing
+CBQ535,Saw nutrition info on fast food menu,DBQ_H,17.1,no,"Questions on nutrition info on menus: attitude rather than behavior, 17% NaN from skip pattern"
+CBQ545,Would use fast food nutrition info,DBQ_H,17.1,no,"Questions on nutrition info on menus: attitude rather than behavior, 17% NaN from skip pattern"
+CBQ552,Is it a chain-restaurant?,DBQ_H,17.8,no,"Questions on nutrition info on menus: attitude rather than behavior, 17% NaN from skip pattern"
+CBQ580,Saw nutrition info on restaurant menu,DBQ_H,17.8,no,"Questions on nutrition info on menus: attitude rather than behavior, 17% NaN from skip pattern"
+CBQ590,Would use restaurant nutrition info,DBQ_H,17.8,no,"Questions on nutrition info on menus: attitude rather than behavior, 17% NaN from skip pattern"
+DBD900,# of meals from fast food or pizza place,DBQ_H,23.5,derive,NaN = does not eat fast food (skip pattern): fill with 0 instead of dropping it
+DBQ235A,How often drank milk age 5-12,DBQ_H,25.7,idk,"Suggest no: Milk in childhood/adolescence: long ago, 25% NaN. I suggest dropping it"
+DBQ235B,How often drank milk age 13-17,DBQ_H,25.7,idk,"Suggest no: Milk in childhood/adolescence: long ago, 25% NaN. I suggest dropping it"
+DBQ235C,How often drank milk age 18-35,DBQ_H,25.7,idk,"Suggest no: Milk in childhood/adolescence: long ago, 25% NaN. I suggest dropping it"
+SEQN,Respondent sequence number,DEMO_H,0,no,Respondent ID
+RIAGENDR,Gender,DEMO_H,0,yes,Sex: basic risk factor
+RIDAGEYR,Age in years at screening,DEMO_H,0,yes,Age: main risk factor
+RIDRETH1,Race/Hispanic origin,DEMO_H,0,no,"Redundant with RIDRETH3, which also separates non-Hispanic Asians (different diabetes risk)"
+RIDRETH3,Race/Hispanic origin w/ NH Asian,DEMO_H,0,maybe,"Ethnicity: epidemiologically relevant but sensitive, to discuss whether to include it in the model"
+RIDEXMON,Six month time period,DEMO_H,0,no,Six-month period of the exam
+DMQMILIZ,Served active duty in US Armed Forces,DEMO_H,0,no,Military service: little relevance
+DMDBORN4,Country of birth,DEMO_H,0,maybe,"Born in the US vs abroad: migration effect on lifestyle, but correlated with ethnicity"
+DMDEDUC2,Education level - Adults 20+,DEMO_H,0,idk,"Suggest yes: Education: strong socio-economic proxy, 0% missing, complementary to INDFMPIR"
+DMDMARTL,Marital status,DEMO_H,0,can be inetersting if exists a relation,"Suggest maybe: Marital status: weak relation and confounded with age; test with mutual information, then decide"
+SIALANG,Language of SP Interview,DEMO_H,0,idk,Suggest no: Interview language/interpreter: administrative variables
+SIAINTRP,Interpreter used in SP Interview?,DEMO_H,0,idk,Suggest no: Interview language/interpreter: administrative variables
+DMDHHSIZ,Total number of people in the Household,DEMO_H,0,idk,Suggest no: Household composition: indirect and weak effect. I suggest dropping it
+DMDFMSIZ,Total number of people in the Family,DEMO_H,0,idk,Suggest no: Household composition: indirect and weak effect. I suggest dropping it
+DMDHHSZA,# of children 5 years or younger in HH,DEMO_H,0,idk,Suggest no: Household composition: indirect and weak effect. I suggest dropping it
+DMDHHSZB,# of children 6-17 years old in HH,DEMO_H,0,idk,Suggest no: Household composition: indirect and weak effect. I suggest dropping it
+DMDHHSZE,# of adults 60 years or older in HH,DEMO_H,0,idk,Suggest no: Household composition: indirect and weak effect. I suggest dropping it
+DMDHRGND,HH ref person's gender,DEMO_H,0,idk,"Suggest no: Refers to the household reference person, not to the respondent"
+DMDHRAGE,HH ref person's age in years,DEMO_H,0,idk,"Suggest no: Refers to the household reference person, not to the respondent"
+WTINT2YR,Full sample 2 year interview weight,DEMO_H,0,no,Sample weights and survey design: keep them in the file but not as features
+WTMEC2YR,Full sample 2 year MEC exam weight,DEMO_H,0,no,Sample weights and survey design: keep them in the file but not as features
+SDMVPSU,Masked variance pseudo-PSU,DEMO_H,0,no,Sample weights and survey design: keep them in the file but not as features
+SDMVSTRA,Masked variance pseudo-stratum,DEMO_H,0,no,Sample weights and survey design: keep them in the file but not as features
+DMDCITZN,Citizenship status,DEMO_H,0.1,idk,Suggest no: Citizenship: redundant with DMDBORN4. I suggest dropping it
+DMDHRMAR,HH ref person's marital status,DEMO_H,0.4,idk,"Suggest no: Refers to the household reference person, not to the respondent"
+FIALANG,Language of Family Interview,DEMO_H,1.2,idk,Suggest no: Interview language/interpreter: administrative variables
+FIAINTRP,Interpreter used in Family Interview?,DEMO_H,1.2,idk,Suggest no: Interview language/interpreter: administrative variables
+INDFMIN2,Annual family income,DEMO_H,1.2,no,Categorical income: redundant with INDFMPIR (continuous and already adjusted for household size)
+INDHHIN2,Annual household income,DEMO_H,1.3,no,Categorical income: redundant with INDFMPIR (continuous and already adjusted for household size)
+DMDHRBR4,HH ref person's country of birth,DEMO_H,2.9,no,"Refers to the household reference person, not to the respondent"
+DMDHREDU,HH ref person's education level,DEMO_H,2.9,no,"Refers to the household reference person, not to the respondent"
+MIAINTRP,Interpreter used in MEC Interview?,DEMO_H,7.2,no,Interview language/interpreter: administrative variables
+MIALANG,Language of MEC Interview,DEMO_H,7.3,no,Interview language/interpreter: administrative variables
+INDFMPIR,Ratio of family income to poverty,DEMO_H,7.6,yes,"Income to poverty ratio: socio-economic proxy, continuous and 7.6% missing"
+AIALANGA,Language of ACASI Interview,DEMO_H,24,no,Interview language/interpreter: administrative variables
+DMDHSEDU,HH ref person's spouse's education level,DEMO_H,48.9,no,"Refers to the reference persons spouse, 49% NaN"
+DIQ010,Doctor told you have diabetes,DIQ_H,0,no,Used to build the label (leakage)
+WTDRD1,Dietary day one sample weight,DR1TOT_H,0,no,Sample weight / recall status / interviewer ID
+DR1DRSTZ,Dietary recall status,DR1TOT_H,0,no,Sample weight / recall status / interviewer ID
+DR1LANG,Language respondent used mostly,DR1TOT_H,8.3,no,Administrative or technical data of the dietary recall
+DRD340,Shellfish eaten during past 30 days,DR1TOT_H,8.3,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD360,Fish eaten during past 30 days,DR1TOT_H,8.3,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DR1EXMER,Interviewer ID code,DR1TOT_H,8.4,no,Sample weight / recall status / interviewer ID
+DR1DAY,Intake day of the week,DR1TOT_H,8.4,no,Administrative or technical data of the dietary recall
+DBQ095Z,Type of table salt used,DR1TOT_H,8.4,no,"Salt use: weak information, 36% NaN; sodium is already in DR1TSODI"
+DRQSPREP,Salt used in preparation?,DR1TOT_H,8.4,no,"Salt use: weak information, 36% NaN; sodium is already in DR1TSODI"
+DR1STY,Salt used at table yesterday?,DR1TOT_H,8.4,no,"Salt use: weak information, 36% NaN; sodium is already in DR1TSODI"
+DRQSDIET,On special diet?,DR1TOT_H,8.4,no,"""Special diet"": often reveals the diagnosis (leakage, like DRQSDT7 already dropped)"
+DR1_300,Compare food consumed yesterday to usual,DR1TOT_H,8.4,no,Comparison with usual intake: only useful to judge recall reliability
+DR1TWS,Tap water source,DR1TOT_H,8.4,no,Administrative or technical data of the dietary recall
+WTDR2D,Dietary two-day sample weight,DR1TOT_H,9.1,no,Sample weight / recall status / interviewer ID
+DRDINT,Number of days of intake,DR1TOT_H,9.1,no,Administrative or technical data of the dietary recall
+DR1HELPD,Helped in responding for this interview,DR1TOT_H,9.1,no,Administrative or technical data of the dietary recall
+DR1TNUMF,Number of foods/beverages reported,DR1TOT_H,9.1,no,Number of foods reported: little information
+DR1TKCAL,Energy (kcal),DR1TOT_H,9.1,yes,"Macronutrient / daily energy (1-day recall, noisy but central for risk)"
+DR1TPROT,Protein (gm),DR1TOT_H,9.1,maybe,Nutrient with moderate evidence; keep only if you do not already compute energy percentages (derive)
+DR1TCARB,Carbohydrate (gm),DR1TOT_H,9.1,yes,"Macronutrient / daily energy (1-day recall, noisy but central for risk)"
+DR1TSUGR,Total sugars (gm),DR1TOT_H,9.1,yes,"Macronutrient / daily energy (1-day recall, noisy but central for risk)"
+DR1TFIBE,Dietary fiber (gm),DR1TOT_H,9.1,yes,"Macronutrient / daily energy (1-day recall, noisy but central for risk)"
+DR1TTFAT,Total fat (gm),DR1TOT_H,9.1,yes,"Macronutrient / daily energy (1-day recall, noisy but central for risk)"
+DR1TSFAT,Total saturated fatty acids (gm),DR1TOT_H,9.1,yes,"Macronutrient / daily energy (1-day recall, noisy but central for risk)"
+DR1TMFAT,Total monounsaturated fatty acids (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TPFAT,Total polyunsaturated fatty acids (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TCHOL,Cholesterol (mg),DR1TOT_H,9.1,maybe,Nutrient with moderate evidence; keep only if you do not already compute energy percentages (derive)
+DR1TATOC,Vitamin E as alpha-tocopherol (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TATOA,Added alpha-tocopherol (Vitamin E) (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TRET,Retinol (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TVARA,"Vitamin A, RAE (mcg)",DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TACAR,Alpha-carotene (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TBCAR,Beta-carotene (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TCRYP,Beta-cryptoxanthin (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TLYCO,Lycopene (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TLZ,Lutein + zeaxanthin (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TVB1,Thiamin (Vitamin B1) (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TVB2,Riboflavin (Vitamin B2) (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TNIAC,Niacin (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TVB6,Vitamin B6 (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TFOLA,Total folate (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TFA,Folic acid (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TFF,Food folate (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TFDFE,"Folate, DFE (mcg)",DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TCHL,Total choline (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TVB12,Vitamin B12 (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TB12A,Added vitamin B12 (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TVC,Vitamin C (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TVD,Vitamin D (D2 + D3) (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TVK,Vitamin K (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TCALC,Calcium (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TPHOS,Phosphorus (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TMAGN,Magnesium (mg),DR1TOT_H,9.1,maybe,Nutrient with moderate evidence; keep only if you do not already compute energy percentages (derive)
+DR1TIRON,Iron (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TZINC,Zinc (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TCOPP,Copper (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TSODI,Sodium (mg),DR1TOT_H,9.1,maybe,Nutrient with moderate evidence; keep only if you do not already compute energy percentages (derive)
+DR1TPOTA,Potassium (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TSELE,Selenium (mcg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TCAFF,Caffeine (mg),DR1TOT_H,9.1,no,Caffeine: weak evidence on risk; alcohol is already covered by the ALQ variables
+DR1TTHEO,Theobromine (mg),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TALCO,Alcohol (gm),DR1TOT_H,9.1,no,Caffeine: weak evidence on risk; alcohol is already covered by the ALQ variables
+DR1TMOIS,Moisture (gm),DR1TOT_H,9.1,no,"Micronutrients and vitamins: 9% NaN, strong collinearity with kcal/food intake, little evidence. Better to drop"
+DR1TS040,SFA 4:0 (Butanoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TS060,SFA 6:0 (Hexanoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TS080,SFA 8:0 (Octanoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TS100,SFA 10:0 (Decanoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TS120,SFA 12:0 (Dodecanoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TS140,SFA 14:0 (Tetradecanoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TS160,SFA 16:0 (Hexadecanoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TS180,SFA 18:0 (Octadecanoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TM161,MFA 16:1 (Hexadecenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TM181,MFA 18:1 (Octadecenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TM201,MFA 20:1 (Eicosenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TM221,MFA 22:1 (Docosenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TP182,PFA 18:2 (Octadecadienoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TP183,PFA 18:3 (Octadecatrienoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TP184,PFA 18:4 (Octadecatetraenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TP204,PFA 20:4 (Eicosatetraenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TP205,PFA 20:5 (Eicosapentaenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TP225,PFA 22:5 (Docosapentaenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1TP226,PFA 22:6 (Docosahexaenoic) (gm),DR1TOT_H,9.1,no,"Individual fatty acids: redundant with total, saturated and unsaturated fat"
+DR1_320Z,Total plain water drank yesterday (gm),DR1TOT_H,9.1,no,Water drunk yesterday: little information and noisy (1-day recall)
+DR1_330Z,Total tap water drank yesterday (gm),DR1TOT_H,9.1,no,Water drunk yesterday: little information and noisy (1-day recall)
+DR1BWATZ,Total bottled water drank yesterday (gm),DR1TOT_H,9.1,no,Water drunk yesterday: little information and noisy (1-day recall)
+DR1DBIH,# of days b/w intake and HH interview,DR1TOT_H,9.3,no,Administrative or technical data of the dietary recall
+DRD370A,Breaded fish products eaten past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370B,Tuna eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370C,Bass eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370D,Catfish eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370E,Cod eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370F,Flatfish eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370G,Haddock eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370H,Mackerel eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370I,Perch eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370K,Pollock eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370M,Salmon eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370N,Sardines eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370O,Sea bass eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370Q,Swordfish eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370R,Trout eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370T,Other fish eaten during past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DRD370U,Other unknown fish eaten in past 30 days,DR1TOT_H,35.8,no,"Fish/shellfish eaten in the past 30 days: very specific, mostly NaN"
+DBD100,How often add salt to food at table,DR1TOT_H,36.5,no,"Salt use: weak information, 36% NaN; sodium is already in DR1TSODI"
+LBXGH,Glycohemoglobin (%),GHB_H,0,no,Used to build the label (leakage)
+HIQ011,Covered by health insurance,HIQ_H,0,maybe,Health insurance yes/no: proxy of access to care; depends on income
+HIQ270,Do plans cover prescriptions?,HIQ_H,21,no,"21% NaN from skip pattern, marginal information"
+HIQ210,Time when no insurance in past year?,HIQ_H,21,no,"21% NaN from skip pattern, marginal information"
+HUQ010,General health condition,HUQ_H,0,maybe,"Self-rated general health: predictive, but people who already have diabetes rate it worse (slight leakage). To discuss"
+HUQ020,Health now compared with 1 year ago,HUQ_H,0,no,Comparison with one year ago: little information
+HUQ030,Routine place to go for healthcare,HUQ_H,0,maybe,Usual place of care: proxy of access to care; weak
+HUQ051,#times receive healthcare over past year,HUQ_H,0,maybe,Number of visits: correlated with an already received diagnosis (partial leakage). To discuss
+HUQ090,Seen mental health professional/past yr,HUQ_H,0,no,Mental health: weakly linked to risk and sensitive data
+HUQ041,Type place most often go for healthcare,HUQ_H,16.1,no,"Type of care facility, 16% NaN"
+MCQ010,Ever been told you have asthma,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ053,Taking treatment for anemia/past 3 mos,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ070,Ever been told you have psoriasis?,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ080,Doctor ever said you were overweight,MCQ_H,0,no,Redundant with BMI (and depends on the doctors judgment)
+MCQ086,Are you on a gluten-free diet?,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ092,Ever receive blood transfusion,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ160A,Doctor ever said you had arthritis,MCQ_H,0,maybe,"Arthritis/gout: linked to metabolic syndrome, moderate evidence"
+MCQ160N,Doctor ever told you that you had gout?,MCQ_H,0,maybe,"Arthritis/gout: linked to metabolic syndrome, moderate evidence"
+MCQ160B,Ever told had congestive heart failure,MCQ_H,0,derive,"Combine B,C,D,E,F into a single ""cardiovascular history"" feature (at least one yes). Note: comorbidities, may be a consequence of diabetes"
+MCQ160C,Ever told you had coronary heart disease,MCQ_H,0,derive,"Combine B,C,D,E,F into a single ""cardiovascular history"" feature (at least one yes). Note: comorbidities, may be a consequence of diabetes"
+MCQ160D,Ever told you had angina/angina pectoris,MCQ_H,0,derive,"Combine B,C,D,E,F into a single ""cardiovascular history"" feature (at least one yes). Note: comorbidities, may be a consequence of diabetes"
+MCQ160E,Ever told you had heart attack,MCQ_H,0,derive,"Combine B,C,D,E,F into a single ""cardiovascular history"" feature (at least one yes). Note: comorbidities, may be a consequence of diabetes"
+MCQ160F,Ever told you had a stroke,MCQ_H,0,derive,"Combine B,C,D,E,F into a single ""cardiovascular history"" feature (at least one yes). Note: comorbidities, may be a consequence of diabetes"
+MCQ160G,Ever told you had emphysema,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ160M,Ever told you had thyroid problem,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ160K,Ever told you had chronic bronchitis,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ160L,Ever told you had any liver condition,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ160O,Ever told you had COPD?,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ220,Ever told you had cancer or malignancy,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ300A,Close relative had heart attack?,MCQ_H,0,maybe,Relative with heart attack: familial cardiometabolic risk; weak
+MCQ300B,Close relative had asthma?,MCQ_H,0,no,Condition unrelated to diabetes risk (or already covered by other variables)
+MCQ300C,Close relative had diabetes?,MCQ_H,0,yes,"Close relative with diabetes: one of the strongest predictors, not leakage"
+MCQ365A,Doctor told you to lose weight,MCQ_H,0,no,"Advice/actions that follow a prediabetes/diabetes diagnosis: leakage, a consequence of the condition we want to predict"
+MCQ365B,Doctor told you to exercise,MCQ_H,0,no,"Advice/actions that follow a prediabetes/diabetes diagnosis: leakage, a consequence of the condition we want to predict"
+MCQ365C,Doctor told you to reduce salt in diet,MCQ_H,0,no,"Advice/actions that follow a prediabetes/diabetes diagnosis: leakage, a consequence of the condition we want to predict"
+MCQ365D,Doctor told you to reduce fat/calories,MCQ_H,0,no,"Advice/actions that follow a prediabetes/diabetes diagnosis: leakage, a consequence of the condition we want to predict"
+MCQ370A,Are you now controlling or losing weight,MCQ_H,0,no,"Advice/actions that follow a prediabetes/diabetes diagnosis: leakage, a consequence of the condition we want to predict"
+MCQ370B,Are you now increasing exercise,MCQ_H,0,no,"Advice/actions that follow a prediabetes/diabetes diagnosis: leakage, a consequence of the condition we want to predict"
+MCQ370C,Are you now reducing salt in diet,MCQ_H,0,no,"Advice/actions that follow a prediabetes/diabetes diagnosis: leakage, a consequence of the condition we want to predict"
+MCQ370D,Are you now reducing fat in diet,MCQ_H,0,no,"Advice/actions that follow a prediabetes/diabetes diagnosis: leakage, a consequence of the condition we want to predict"
+MCQ203,Ever been told you have jaundice?,MCQ_H,0.4,no,Condition unrelated to diabetes risk (or already covered by other variables)
+PAQ710,Hours watch TV or videos past 30 days,PAQ_H,0,maybe,"TV hours: good evidence, but overlaps with PAD680; keep only one"
+PAQ715,Hours use computer past 30 days,PAQ_H,0,no,Computer hours: redundant with PAD680
+PAD680,Minutes sedentary activity,PAQ_H,0.1,yes,"Sedentary minutes: clean (0.1% NaN), needs cleaning of the 7777/9999 codes"
+SLQ050,Ever told doctor had trouble sleeping?,SLQ_H,0,no,"Reported trouble sleeping: weak information, redundant with SLQ060"
+SLQ060,Ever told by doctor have sleep disorder?,SLQ_H,0,maybe,Diagnosed sleep disorder (e.g. apnea): associated with metabolic risk
+SLD010H,How much sleep do you get (hours)?,SLQ_H,0.1,yes,Hours of sleep: well documented link with diabetes risk
+smoking_status,"Smoking: 0 never, 1 former, 2 current",derived,0,yes,"Derived variable: smoking (0 never, 1 former, 2 current)"
+medicare,Covered by Medicare (0/1),derived,0,no,"Proxy of age and health, collinear with RIDAGEYR"
+medicaid,Covered by Medicaid (0/1),derived,0,maybe,"Proxy of low income, already covered by INDFMPIR; to discuss"
+hospital_stays,Overnight hospital stays in the last year (0 if none),derived,0,maybe,Hospital stays: possible leakage (admissions caused by diabetes)
+vigorous_min,Minutes/week of vigorous activity,derived,0.1,no,Collinear with equivalent_min (which combines them)
+cigarettes_per_day,Cigarettes per day (0 for non-smokers),derived,0.3,maybe,Informative only among smokers and correlated with smoking_status; test it
+moderate_min,Minutes/week of moderate activity,derived,0.3,no,Collinear with equivalent_min (which combines them)
+equivalent_min,Moderate-equivalent minutes (moderate + 2 x vigorous),derived,0.3,yes,"Weekly physical activity in equivalent minutes, concise"
+sbp_mean,Mean systolic blood pressure,derived,3.3,yes,"Mean systolic blood pressure, after merging the three readings"
+dbp_mean,Mean diastolic blood pressure,derived,3.3,yes,"Mean diastolic blood pressure, after merging the three readings"
