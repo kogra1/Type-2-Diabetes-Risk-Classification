@@ -46,6 +46,18 @@ def minutes_per_week(times, unit, minutes):
     per_week = times.replace([7777, 9999], np.nan) * unit.map({"D": 7, "W": 1, "M": 12 / 52, "Y": 1 / 52})
     return (per_week * minutes.replace([7777, 9999], np.nan)).mask(times == 0, 0)
 
+def clean_data(df):
+    """
+    Cleans the NHANES data by removing rows with missing values in critical columns.
+    Returns the cleaned DataFrame.
+    """
+    # Remove rows with missing values in critical columns
+    critical_columns = ["RIDAGEYR", "INDFMPIR", "BMXBMI", "waist_height_ratio", "sbp_mean", "dbp_mean",
+                        "DR1TKCAL", "DR1TCARB", "DR1TSUGR", "DR1TFIBE", "DR1TTFAT", "DR1TSFAT",
+                        "equivalent_min", "PAD680", "SLD012", "smoking_status", "alcohol_per_week",
+                        "RIAGENDR", "ALQ111", "cardio_history"]
+    df_cleaned = df.dropna(subset=critical_columns)
+    return df_cleaned
 
 def load_nhanes():
     """
@@ -99,5 +111,10 @@ def load_nhanes():
 
 if __name__ == "__main__":
     df = load_nhanes()
+    print(len(df[df["smoking_status"].isna()]))
+    print(len(df))
+    df = clean_data(df)
+    print(len(df[df["smoking_status"].isna()]))
+    print(len(df))
     print(df.shape)
     print(df[TARGET].value_counts().sort_index())
