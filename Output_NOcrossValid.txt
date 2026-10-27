@@ -1,0 +1,583 @@
+Output main_tuning_NOcrossValid.py
+
+RIDAGEYR  INDFMPIR  BMXBMI  waist_height_ratio    sbp_mean   dbp_mean  ...  smoking_status  alcohol_per_week  RIAGENDR  ALQ111  cardio_history  risk
+SEQN                                                                           ...                                                                          
+130378      43.0      5.00    27.0            0.547632  132.666667  96.000000  ...             1.0               NaN       0.0     NaN             0.0     0
+130379      66.0      5.00    33.5            0.658439  117.000000  78.666667  ...             1.0         18.000000       0.0     1.0             0.0     0
+130380      44.0      1.41    29.7            0.611511  109.000000  78.333333  ...             0.0          0.028846       1.0     1.0             0.0     2
+130386      34.0      1.33    30.2            0.612233  115.000000  73.666667  ...             1.0          4.000000       0.0     1.0             0.0     0
+130387      68.0      1.32    42.6            0.782553  141.333333  76.000000  ...             0.0          0.000000       1.0     1.0             0.0     1
+
+[5 rows x 21 columns]
+<class 'pandas.DataFrame'>
+Index: 5730 entries, 130378 to 142310
+Data columns (total 21 columns):
+ #   Column              Non-Null Count  Dtype  
+---  ------              --------------  -----  
+ 0   RIDAGEYR            5730 non-null   float64
+ 1   INDFMPIR            4996 non-null   float64
+ 2   BMXBMI              5649 non-null   float64
+ 3   waist_height_ratio  5462 non-null   float64
+ 4   sbp_mean            5550 non-null   float64
+ 5   dbp_mean            5550 non-null   float64
+ 6   DR1TKCAL            4567 non-null   float64
+ 7   DR1TCARB            4567 non-null   float64
+ 8   DR1TSUGR            4567 non-null   float64
+ 9   DR1TFIBE            4567 non-null   float64
+ 10  DR1TTFAT            4567 non-null   float64
+ 11  DR1TSFAT            4567 non-null   float64
+ 12  equivalent_min      5664 non-null   float64
+ 13  PAD680              5688 non-null   float64
+ 14  SLD012              5668 non-null   float64
+ 15  smoking_status      5723 non-null   float64
+ 16  alcohol_per_week    4937 non-null   float64
+ 17  RIAGENDR            5730 non-null   float64
+ 18  ALQ111              4965 non-null   float64
+ 19  cardio_history      5703 non-null   float64
+ 20  risk                5730 non-null   int64  
+dtypes: float64(20), int64(1)
+memory usage: 984.8 KB
+None
+          RIDAGEYR     INDFMPIR       BMXBMI  waist_height_ratio     sbp_mean  ...  alcohol_per_week     RIAGENDR       ALQ111  cardio_history         risk
+count  5730.000000  4996.000000  5649.000000         5462.000000  5550.000000  ...       4937.000000  5730.000000  4965.000000     5703.000000  5730.000000
+mean     54.158115     2.951876    29.819366            0.606381   122.905946  ...          3.715621     0.548691     0.914401        0.128880     0.591623
+std      16.998736     1.650557     7.271829            0.100533    18.010322  ...          8.312539     0.497667     0.279799        0.335096     0.761987
+min      20.000000     0.000000    11.100000            0.374787    70.000000  ...          0.000000     0.000000     0.000000        0.000000     0.000000
+25%      40.000000     1.460000    24.700000            0.532504   110.666667  ...          0.028846     0.000000     1.000000        0.000000     0.000000
+50%      58.000000     2.870000    28.500000            0.596777   120.333333  ...          0.461538     1.000000     1.000000        0.000000     0.000000
+75%      68.000000     5.000000    33.500000            0.669724   132.666667  ...          3.500000     1.000000     1.000000        0.000000     1.000000
+max      80.000000     5.000000    74.800000            1.054931   232.333333  ...        105.000000     1.000000     1.000000        1.000000     2.000000
+
+[8 rows x 21 columns]
+(5730, 21)
+Features shape: (5730, 20)
+Target shape: (5730,)
+X_train.shape: (3667, 20), X_validation shape: (917, 20), X_test.shape: (1146, 20), y_test shape: (1146,), y_train.shape: (3667,), y_validation.shape: (917,)
+Baseline (most frequent) Validation Accuracy: 0.5779716466739367
+Confusion Matrix:
+[[530   0   0]
+ [232   0   0]
+ [155   0   0]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.58      1.00      0.73       530
+ Prediabetes       0.00      0.00      0.00       232
+    Diabetes       0.00      0.00      0.00       155
+
+    accuracy                           0.58       917
+   macro avg       0.19      0.33      0.24       917
+weighted avg       0.33      0.58      0.42       917
+
+Logistic Regression (C=1) Validation Accuracy: 0.6183206106870229
+Confusion Matrix:
+[[468  42  20]
+ [149  52  31]
+ [ 75  33  47]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.68      0.88      0.77       530
+ Prediabetes       0.41      0.22      0.29       232
+    Diabetes       0.48      0.30      0.37       155
+
+    accuracy                           0.62       917
+   macro avg       0.52      0.47      0.48       917
+weighted avg       0.58      0.62      0.58       917
+
+Logistic Regression (C=0.1, balanced) Validation Accuracy: 0.5714285714285714
+Confusion Matrix:
+[[353 115  62]
+ [ 63  84  85]
+ [ 26  42  87]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.80      0.67      0.73       530
+ Prediabetes       0.35      0.36      0.36       232
+    Diabetes       0.37      0.56      0.45       155
+
+    accuracy                           0.57       917
+   macro avg       0.51      0.53      0.51       917
+weighted avg       0.61      0.57      0.59       917
+
+Logistic Regression (C=1, balanced) Validation Accuracy: 0.569247546346783
+Confusion Matrix:
+[[354 114  62]
+ [ 67  82  83]
+ [ 26  43  86]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.79      0.67      0.72       530
+ Prediabetes       0.34      0.35      0.35       232
+    Diabetes       0.37      0.55      0.45       155
+
+    accuracy                           0.57       917
+   macro avg       0.50      0.53      0.51       917
+weighted avg       0.61      0.57      0.58       917
+
+Logistic Regression (C=10, balanced) Validation Accuracy: 0.5670665212649946
+Confusion Matrix:
+[[352 114  64]
+ [ 67  82  83]
+ [ 26  43  86]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.79      0.66      0.72       530
+ Prediabetes       0.34      0.35      0.35       232
+    Diabetes       0.37      0.55      0.44       155
+
+    accuracy                           0.57       917
+   macro avg       0.50      0.52      0.50       917
+weighted avg       0.61      0.57      0.58       917
+
+KNN (k=15) Validation Accuracy: 0.5877862595419847
+Confusion Matrix:
+[[468  50  12]
+ [171  48  13]
+ [103  29  23]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.63      0.88      0.74       530
+ Prediabetes       0.38      0.21      0.27       232
+    Diabetes       0.48      0.15      0.23       155
+
+    accuracy                           0.59       917
+   macro avg       0.50      0.41      0.41       917
+weighted avg       0.54      0.59      0.53       917
+
+KNN (k=25) Validation Accuracy: 0.5877862595419847
+Confusion Matrix:
+[[479  43   8]
+ [181  39  12]
+ [108  26  21]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.62      0.90      0.74       530
+ Prediabetes       0.36      0.17      0.23       232
+    Diabetes       0.51      0.14      0.21       155
+
+    accuracy                           0.59       917
+   macro avg       0.50      0.40      0.39       917
+weighted avg       0.54      0.59      0.52       917
+
+KNN (k=15, distance) Validation Accuracy: 0.5899672846237731
+Confusion Matrix:
+[[458  57  15]
+ [160  54  18]
+ [ 92  34  29]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.65      0.86      0.74       530
+ Prediabetes       0.37      0.23      0.29       232
+    Diabetes       0.47      0.19      0.27       155
+
+    accuracy                           0.59       917
+   macro avg       0.50      0.43      0.43       917
+weighted avg       0.55      0.59      0.54       917
+
+KNN (k=25, distance) Validation Accuracy: 0.5877862595419847
+Confusion Matrix:
+[[474  46  10]
+ [173  42  17]
+ [104  28  23]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.63      0.89      0.74       530
+ Prediabetes       0.36      0.18      0.24       232
+    Diabetes       0.46      0.15      0.22       155
+
+    accuracy                           0.59       917
+   macro avg       0.48      0.41      0.40       917
+weighted avg       0.53      0.59      0.53       917
+
+Decision Tree (depth=5, leaf=20) Validation Accuracy: 0.5932388222464559
+Confusion Matrix:
+[[463  55  12]
+ [154  54  24]
+ [ 80  48  27]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.66      0.87      0.75       530
+ Prediabetes       0.34      0.23      0.28       232
+    Diabetes       0.43      0.17      0.25       155
+
+    accuracy                           0.59       917
+   macro avg       0.48      0.43      0.43       917
+weighted avg       0.54      0.59      0.55       917
+
+Decision Tree (depth=5, leaf=20, balanced) Validation Accuracy: 0.49291166848418755
+Confusion Matrix:
+[[281 138 111]
+ [ 49  66 117]
+ [ 16  34 105]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.81      0.53      0.64       530
+ Prediabetes       0.28      0.28      0.28       232
+    Diabetes       0.32      0.68      0.43       155
+
+    accuracy                           0.49       917
+   macro avg       0.47      0.50      0.45       917
+weighted avg       0.59      0.49      0.51       917
+
+Decision Tree (depth=7, leaf=20, balanced) Validation Accuracy: 0.5092693565976009
+Confusion Matrix:
+[[276 171  83]
+ [ 46 108  78]
+ [ 17  55  83]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.81      0.52      0.64       530
+ Prediabetes       0.32      0.47      0.38       232
+    Diabetes       0.34      0.54      0.42       155
+
+    accuracy                           0.51       917
+   macro avg       0.49      0.51      0.48       917
+weighted avg       0.61      0.51      0.53       917
+
+Decision Tree (depth=10, leaf=40, balanced) Validation Accuracy: 0.5278080697928026
+Confusion Matrix:
+[[299 141  90]
+ [ 58  85  89]
+ [ 16  39 100]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.80      0.56      0.66       530
+ Prediabetes       0.32      0.37      0.34       232
+    Diabetes       0.36      0.65      0.46       155
+
+    accuracy                           0.53       917
+   macro avg       0.49      0.53      0.49       917
+weighted avg       0.61      0.53      0.55       917
+
+Random Forest (n=100, depth=None) Validation Accuracy: 0.6205016357688113
+Confusion Matrix:
+[[469  38  23]
+ [151  50  31]
+ [ 82  23  50]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.67      0.88      0.76       530
+ Prediabetes       0.45      0.22      0.29       232
+    Diabetes       0.48      0.32      0.39       155
+
+    accuracy                           0.62       917
+   macro avg       0.53      0.47      0.48       917
+weighted avg       0.58      0.62      0.58       917
+
+Random Forest (n=300, depth=10, leaf=10) Validation Accuracy: 0.6063249727371864
+Confusion Matrix:
+[[483  34  13]
+ [167  30  35]
+ [ 92  20  43]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.65      0.91      0.76       530
+ Prediabetes       0.36      0.13      0.19       232
+    Diabetes       0.47      0.28      0.35       155
+
+    accuracy                           0.61       917
+   macro avg       0.49      0.44      0.43       917
+weighted avg       0.55      0.61      0.55       917
+
+Random Forest (n=300, depth=10, leaf=10, balanced) Validation Accuracy: 0.5736095965103599
+Confusion Matrix:
+[[351 105  74]
+ [ 59  80  93]
+ [ 20  40  95]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.82      0.66      0.73       530
+ Prediabetes       0.36      0.34      0.35       232
+    Diabetes       0.36      0.61      0.46       155
+
+    accuracy                           0.57       917
+   macro avg       0.51      0.54      0.51       917
+weighted avg       0.62      0.57      0.59       917
+
+Random Forest (n=300, depth=None, leaf=5, balanced_subsample) Validation Accuracy: 0.6150490730643402
+Confusion Matrix:
+[[394  85  51]
+ [ 84  87  61]
+ [ 32  40  83]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.77      0.74      0.76       530
+ Prediabetes       0.41      0.38      0.39       232
+    Diabetes       0.43      0.54      0.47       155
+
+    accuracy                           0.62       917
+   macro avg       0.54      0.55      0.54       917
+weighted avg       0.62      0.62      0.62       917
+
+Random Forest (n=300, depth=8, leaf=5, sqrt, balanced) Validation Accuracy: 0.5703380588876772
+Confusion Matrix:
+[[348 112  70]
+ [ 56  82  94]
+ [ 23  39  93]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.81      0.66      0.73       530
+ Prediabetes       0.35      0.35      0.35       232
+    Diabetes       0.36      0.60      0.45       155
+
+    accuracy                           0.57       917
+   macro avg       0.51      0.54      0.51       917
+weighted avg       0.62      0.57      0.59       917
+
+Random Forest (n=500, depth=12, leaf=10, 0.5, balanced) Validation Accuracy: 0.5779716466739367
+Confusion Matrix:
+[[341 120  69]
+ [ 52  97  83]
+ [ 20  43  92]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.83      0.64      0.72       530
+ Prediabetes       0.37      0.42      0.39       232
+    Diabetes       0.38      0.59      0.46       155
+
+    accuracy                           0.58       917
+   macro avg       0.53      0.55      0.53       917
+weighted avg       0.64      0.58      0.60       917
+
+SVM (linear, C=0.1, balanced) Validation Accuracy: 0.5627044711014176
+Confusion Matrix:
+[[338 131  61]
+ [ 54  92  86]
+ [ 26  43  86]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.81      0.64      0.71       530
+ Prediabetes       0.35      0.40      0.37       232
+    Diabetes       0.37      0.55      0.44       155
+
+    accuracy                           0.56       917
+   macro avg       0.51      0.53      0.51       917
+weighted avg       0.62      0.56      0.58       917
+
+SVM (rbf, C=1) Validation Accuracy: 0.6194111232279171
+Confusion Matrix:
+[[494  25  11]
+ [171  38  23]
+ [ 94  25  36]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.65      0.93      0.77       530
+ Prediabetes       0.43      0.16      0.24       232
+    Diabetes       0.51      0.23      0.32       155
+
+    accuracy                           0.62       917
+   macro avg       0.53      0.44      0.44       917
+weighted avg       0.57      0.62      0.56       917
+
+SVM (rbf, C=1, balanced) Validation Accuracy: 0.579062159214831
+Confusion Matrix:
+[[347 117  66]
+ [ 61 101  70]
+ [ 20  52  83]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.81      0.65      0.72       530
+ Prediabetes       0.37      0.44      0.40       232
+    Diabetes       0.38      0.54      0.44       155
+
+    accuracy                           0.58       917
+   macro avg       0.52      0.54      0.52       917
+weighted avg       0.63      0.58      0.60       917
+
+SVM (rbf, C=1, gamma=0.01, balanced) Validation Accuracy: 0.5714285714285714
+Confusion Matrix:
+[[341 127  62]
+ [ 54  94  84]
+ [ 24  42  89]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.81      0.64      0.72       530
+ Prediabetes       0.36      0.41      0.38       232
+    Diabetes       0.38      0.57      0.46       155
+
+    accuracy                           0.57       917
+   macro avg       0.52      0.54      0.52       917
+weighted avg       0.62      0.57      0.59       917
+
+SVM (rbf, C=3, gamma=0.01, balanced) Validation Accuracy: 0.5659760087241004
+Confusion Matrix:
+[[340 132  58]
+ [ 60  96  76]
+ [ 24  48  83]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.80      0.64      0.71       530
+ Prediabetes       0.35      0.41      0.38       232
+    Diabetes       0.38      0.54      0.45       155
+
+    accuracy                           0.57       917
+   macro avg       0.51      0.53      0.51       917
+weighted avg       0.62      0.57      0.58       917
+
+SVM (rbf, C=10, gamma=0.003, balanced) Validation Accuracy: 0.5747001090512541
+Confusion Matrix:
+[[342 129  59]
+ [ 56  97  79]
+ [ 24  43  88]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.81      0.65      0.72       530
+ Prediabetes       0.36      0.42      0.39       232
+    Diabetes       0.39      0.57      0.46       155
+
+    accuracy                           0.57       917
+   macro avg       0.52      0.54      0.52       917
+weighted avg       0.63      0.57      0.59       917
+
+FFNN (100, relu) Validation Accuracy: 0.5659760087241004
+Confusion Matrix:
+[[399  88  43]
+ [115  71  46]
+ [ 63  43  49]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.69      0.75      0.72       530
+ Prediabetes       0.35      0.31      0.33       232
+    Diabetes       0.36      0.32      0.33       155
+
+    accuracy                           0.57       917
+   macro avg       0.47      0.46      0.46       917
+weighted avg       0.55      0.57      0.56       917
+
+FFNN (32, relu, alpha=0.1, early stopping) Validation Accuracy: 0.6150490730643402
+Confusion Matrix:
+[[463  51  16]
+ [135  58  39]
+ [ 69  43  43]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.69      0.87      0.77       530
+ Prediabetes       0.38      0.25      0.30       232
+    Diabetes       0.44      0.28      0.34       155
+
+    accuracy                           0.62       917
+   macro avg       0.50      0.47      0.47       917
+weighted avg       0.57      0.62      0.58       917
+
+FFNN (64, relu, alpha=1, early stopping) Validation Accuracy: 0.6095965103598692
+Confusion Matrix:
+[[466  49  15]
+ [148  49  35]
+ [ 76  35  44]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.68      0.88      0.76       530
+ Prediabetes       0.37      0.21      0.27       232
+    Diabetes       0.47      0.28      0.35       155
+
+    accuracy                           0.61       917
+   macro avg       0.50      0.46      0.46       917
+weighted avg       0.56      0.61      0.57       917
+
+FFNN (64-32, relu, alpha=0.1, early stopping) Validation Accuracy: 0.6052344601962922
+Confusion Matrix:
+[[502  12  16]
+ [182  21  29]
+ [112  11  32]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.63      0.95      0.76       530
+ Prediabetes       0.48      0.09      0.15       232
+    Diabetes       0.42      0.21      0.28       155
+
+    accuracy                           0.61       917
+   macro avg       0.51      0.41      0.40       917
+weighted avg       0.56      0.61      0.52       917
+
+FFNN (32, tanh, alpha=0.1, early stopping) Validation Accuracy: 0.604143947655398
+Confusion Matrix:
+[[462  45  23]
+ [147  50  35]
+ [ 71  42  42]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.68      0.87      0.76       530
+ Prediabetes       0.36      0.22      0.27       232
+    Diabetes       0.42      0.27      0.33       155
+
+    accuracy                           0.60       917
+   macro avg       0.49      0.45      0.45       917
+weighted avg       0.56      0.60      0.57       917
+
+                                                               Train Accuracy  Validation Accuracy     Gap  Precision  Recall  F1-Score  Recall Prediabetes  Recall Diabetes
+Model      
+Baseline (most frequent)                                               0.5779               0.5780 -0.0001     0.1927  0.3333    0.2442              0.00000.0000
+Logistic Regression (C=1)                                              0.6215               0.6183  0.0032     0.5218  0.4701    0.4757              0.22410.3032
+Logistic Regression (C=0.1, balanced)                                  0.5781               0.5714  0.0067     0.5063  0.5298    0.5096              0.36210.5613
+Logistic Regression (C=1, balanced)                                    0.5770               0.5692  0.0078     0.5024  0.5254    0.5062              0.35340.5548
+Logistic Regression (C=10, balanced)                                   0.5781               0.5671  0.0111     0.5011  0.5241    0.5045              0.35340.5548
+KNN (k=15)                                                             0.6417               0.5878  0.0539     0.4959  0.4128    0.4100              0.20690.1484
+KNN (k=25)                                                             0.6332               0.5878  0.0454     0.4990  0.4025    0.3939              0.16810.1355
+KNN (k=15, distance)                                                   1.0000               0.5900  0.4100     0.4951  0.4280    0.4308              0.23280.1871
+KNN (k=25, distance)                                                   1.0000               0.5878  0.4122     0.4844  0.4079    0.4019              0.18100.1484
+Decision Tree (depth=5, leaf=20)                                       0.6204               0.5932  0.0272     0.4789  0.4268    0.4267              0.23280.1742
+Decision Tree (depth=5, leaf=20, balanced)                             0.5340               0.4929  0.0410     0.4683  0.4974    0.4509              0.28450.6774
+Decision Tree (depth=7, leaf=20, balanced)                             0.5784               0.5093  0.0691     0.4926  0.5073    0.4776              0.46550.5355
+Decision Tree (depth=10, leaf=40, balanced)                            0.5909               0.5278  0.0631     0.4936  0.5252    0.4884              0.36640.6452
+Random Forest (n=100, depth=None)                                      1.0000               0.6205  0.3795     0.5331  0.4743    0.4797              0.21550.3226
+Random Forest (n=300, depth=10, leaf=10)                               0.7499               0.6063  0.1436     0.4935  0.4394    0.4330              0.12930.2774
+Random Forest (n=300, depth=10, leaf=10, balanced)                     0.7488               0.5736  0.1752     0.5115  0.5400    0.5123              0.34480.6129
+Random Forest (n=300, depth=None, leaf=5, balanced_subsample)          0.9078               0.6150  0.2928     0.5362  0.5513    0.5413              0.37500.5355
+Random Forest (n=300, depth=8, leaf=5, sqrt, balanced)                 0.7415               0.5703  0.1711     0.5096  0.5367    0.5105              0.35340.6000
+Random Forest (n=500, depth=12, leaf=10, 0.5, balanced)                0.7619               0.5780  0.1840     0.5253  0.5517    0.5262              0.41810.5935
+SVM (linear, C=0.1, balanced)                                          0.5710               0.5627  0.0083     0.5079  0.5297    0.5086              0.39660.5548
+SVM (rbf, C=1)                                                         0.6749               0.6194  0.0555     0.5323  0.4427    0.4413              0.16380.2323
+SVM (rbf, C=1, balanced)                                               0.6673               0.5791  0.0882     0.5213  0.5418    0.5236              0.43530.5355
+SVM (rbf, C=1, gamma=0.01, balanced)                                   0.5860               0.5714  0.0146     0.5167  0.5409    0.5183              0.40520.5742
+SVM (rbf, C=3, gamma=0.01, balanced)                                   0.6005               0.5660  0.0345     0.5107  0.5303    0.5123              0.41380.5355
+SVM (rbf, C=10, gamma=0.003, balanced)                                 0.5877               0.5747  0.0130     0.5201  0.5437    0.5226              0.41810.5677
+FFNN (100, relu)                                                       0.8596               0.5660  0.2936     0.4660  0.4583    0.4608              0.30600.3161
+FFNN (32, relu, alpha=0.1, early stopping)                             0.6218               0.6150  0.0067     0.5048  0.4670    0.4719              0.25000.2774
+FFNN (64, relu, alpha=1, early stopping)                               0.6354               0.6096  0.0258     0.5040  0.4581    0.4619              0.21120.2839
+FFNN (64-32, relu, alpha=0.1, early stopping)                          0.6032               0.6052 -0.0020     0.5078  0.4147    0.3951              0.09050.2065
+FFNN (32, tanh, alpha=0.1, early stopping)                             0.6147               0.6041  0.0105     0.4881  0.4527    0.4547              0.21550.2710
+Best model on the validation set: Random Forest (n=300, depth=None, leaf=5, balanced_subsample)
+Random Forest (n=300, depth=None, leaf=5, balanced_subsample) Test Accuracy: 0.587260034904014
+Confusion Matrix:
+[[475 120  67]
+ [110  99  81]
+ [ 34  61  99]]
+Classification Report:
+              precision    recall  f1-score   support
+
+         Low       0.77      0.72      0.74       662
+ Prediabetes       0.35      0.34      0.35       290
+    Diabetes       0.40      0.51      0.45       194
+
+    accuracy                           0.59      1146
+   macro avg       0.51      0.52      0.51      1146
+weighted avg       0.60      0.59      0.59      1146
