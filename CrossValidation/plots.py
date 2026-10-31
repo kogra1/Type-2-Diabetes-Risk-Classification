@@ -166,11 +166,11 @@ def main():
     # validation set taken from the training set
     X_tr, X_val, y_tr, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=SEED, stratify=y_train)
 
-    #plot_epochs(X_tr, y_tr, X_val, y_val)
-    #plot_learning_curves(X_train, y_train)
-    #plot_validation_curves(X_train, y_train)
+    plot_epochs(X_tr, y_tr, X_val, y_val)
+    plot_learning_curves(X_train, y_train)
+    plot_validation_curves(X_train, y_train)
     plot_report()
-    #plot_confusion(X_train, y_train, X_test, y_test)
+    plot_confusion(X_train, y_train, X_test, y_test)
 
 
 if __name__ == "__main__":
