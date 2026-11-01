@@ -80,7 +80,7 @@ def main():
     y = df[TARGET]
 
     # Step 2: Train-Test Split 
-    # Same split as main_tuning.py (same seed), so the test set is identical.
+    # Same split as main_tuning_NocrossValid (same seed), so the test set is identical.
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=SEED, stratify=y)
     print(f"X_train.shape: {X_train.shape}, X_test.shape: {X_test.shape}")
 
