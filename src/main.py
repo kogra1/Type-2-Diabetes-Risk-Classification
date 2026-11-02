@@ -13,6 +13,10 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, precision_score, recall_score, f1_score
 from load_data import load_nhanes, TARGET, NUMERIC_COLS, BINARY_COLS
+from sklearn.inspection import permutation_importance
+import numpy as np
+
+
 
 SEED = 35
 CLASS_NAMES = ["Low", "Prediabetes", "Diabetes"]
@@ -104,12 +108,13 @@ def main():
     print(f"Target shape: {y.shape}")
 
     # Visualizes the distribution of the target variable
-    counts = y.value_counts().sort_index()
+    # Currently commented out since i've seen it enough times
+    """counts = y.value_counts().sort_index()
     plt.bar(["Low (0)", "Prediabetes (1)", "Diabetes (2)"], counts.values)
     plt.xlabel("Diabetes Risk")
     plt.ylabel("Count")
     plt.title("Distribution of Diabetes Risk")
-    plt.show()
+    plt.show()"""
 
     # ===== Step 3: Train-Test Split =====
     # Splits the data into 80% train and 20% test using stratified splitting
@@ -194,6 +199,89 @@ def main():
     final_report = pd.DataFrame(rows).set_index("Model").round(4)
     print(final_report.to_string())
 
+
+    # ===== Step 6.5: Feature Importance With Permutation =====
+
+    feature_names = preprocessor.get_feature_names_out()
+
+    importance_results = []
+    # at the moment only works for single models, not pipelines, but that can be fixed when we combine things
+    for name, model in models:
+        result = permutation_importance(
+            model,
+            X_validation,
+            y_validation,
+            scoring="f1_macro",
+            n_repeats=10,
+            random_state=SEED,
+            n_jobs=-1
+        )
+
+        built_in_fi = None
+        average_absolute_coefficient = None
+
+        # checks whether feature_importances_ works (it should for Random Forest and Decision Trees)
+        if hasattr(model, "feature_importances_"):
+            built_in_fi = np.asarray(model.feature_importances_).ravel()
+
+    
+        # checks whether coef_ works (it should for Logistic Regression and Linear SVM)
+        elif hasattr(model, "coef_"):
+            coefficients = np.asarray(model.coef_)
+            if coefficients.ndim == 1:
+                coefficients = coefficients.reshape(-1,1)
+            
+            
+            average_absolute_coefficient = np.mean(np.abs(coefficients), axis=0)
+
+            
+
+        for index, feature in enumerate(feature_names):
+            importance_results.append({
+                "Model": name,
+                "Feature": feature,
+                "Permutation Importance": result.importances_mean[index],
+                "Std PermImport": result.importances_std[index],
+                "Built-In FI": built_in_fi[index] if built_in_fi is not None else np.nan,
+                "AVG Absolute Coeff": average_absolute_coefficient[index] if average_absolute_coefficient is not None else np.nan,
+            })
+        
+    importances = pd.DataFrame(importance_results)
+    # Sort by model name, and by importance within each model
+    importances = importances.sort_values(
+        ["Model", "Permutation Importance"],
+        ascending=[True, False]
+    ).reset_index(drop=True)
+
+
+    # save the results to csv
+    importances.to_csv(
+        "feature_importance_results.csv",
+        index=False
+    )
+    # Examine importance for each model, write to txt for easier readability and not overfilling terminal
+    with open("importance_output.txt", "w") as output_file:
+        for name in importances["Model"].unique():
+            print(f"\nFeature importance: {name}", file=output_file)
+
+            model_importance = (
+                importances[importances["Model"] == name]
+                .sort_values("Permutation Importance", ascending=False)
+            )
+
+            print(model_importance.to_string(index=False), file=output_file)
+
+    # Uncomment to print to terminal (not recommended)
+    """for name in importances["Model"].unique():
+        print(f"\nFeature importance: {name}")
+
+        model_importance = (
+            importances[importances["Model"] == name]
+            .sort_values("Permutation Importance", ascending=False)
+        )
+
+        print(model_importance.to_string(index=False))"""
+
     # ===== Step 7: Final Model Selection =====
     # Picks the model with the best validation F1-score (macro)
     best_name = final_report["F1-Score"].idxmax()
@@ -208,6 +296,89 @@ def main():
     # ===== Step 8: Final Test Evaluation =====
     # Evaluate the best model on the test set
     accuracy, confusion, report = evaluate_model(best_model, X_test, y_test)
+    print(f"{best_name} Test Accuracy: {accuracy}")
+    print(f"Confusion Matrix:\n{confusion}")
+    print(f"Classification Report:\n{report}")
+
+
+    # ===== Step 8.5: Final Model Importance Test =====
+
+    new_importance_results = []
+    result = permutation_importance(
+            best_model,
+            X_validation,
+            y_validation,
+            scoring="f1_macro",
+            n_repeats=10,
+            random_state=SEED,
+            n_jobs=-1
+        )
+
+    built_in_fi = None
+    average_absolute_coefficient = None
+
+    #coefficients = None
+    # checks whether feature_importances_ works (it should for Random Forest and Decision Trees)
+    if hasattr(best_model, "feature_importances_"):
+        built_in_fi = np.asarray(best_model.feature_importances_).ravel()
+
+    
+    # checks whether coef_ works (it should for Logistic Regression and Linear SVM)
+    elif hasattr(best_model, "coef_"):
+        coefficients = np.asarray(best_model.coef_)
+        if coefficients.ndim == 1:
+            coefficients = coefficients.reshape(-1,1)
+            
+            
+        average_absolute_coefficient = np.mean(np.abs(coefficients), axis=0)
+
+
+    for index, feature in enumerate(feature_names):
+        new_importance_results.append({
+            "Model": best_name,
+            "Feature": feature,
+            "Permutation Importance": result.importances_mean[index],
+            "Std PermImport": result.importances_std[index],
+            "Built-In FI": built_in_fi[index] if built_in_fi is not None else np.nan,
+            "AVG Absolute Coeff": average_absolute_coefficient[index] if average_absolute_coefficient is not None else np.nan,
+        })
+
+    best_importances = pd.DataFrame(new_importance_results)
+
+    
+    for name in best_importances["Model"].unique():
+        print(f"\nFeature importance: {name}")
+
+        model_importance = (
+            best_importances[best_importances["Model"] == name]
+            .sort_values("Permutation Importance", ascending=False)
+        )
+
+        print(model_importance.to_string(index=False))
+    
+    # change number based on how many of the important features you want to use.
+    best_features = (
+        best_importances.nlargest(25, "Permutation Importance")["Feature"].tolist()
+    )
+    feature_indices = [index for index, feature in enumerate(feature_names) if feature in best_features]
+    
+    X_train_with_best = X_train[:, feature_indices]
+    X_validation_with_best = X_validation[:, feature_indices]
+    X_test_with_best = X_test[:, feature_indices]
+
+    # replace with what you want to test
+    best_model_with_feature_drop = svm_classifier(X_train_with_best, y_train, kernel="linear", C=0.1)
+
+    # Validation with feature drop
+    accuracy, confusion, report = evaluate_model(best_model_with_feature_drop, X_validation_with_best, y_validation)
+    y_pred = model.predict(X_validation)
+    print("\n")
+    print(f"{name} Validation Accuracy: {accuracy}")
+    print(f"Confusion Matrix:\n{confusion}")
+    print(f"Classification Report:\n{report}")
+
+    # Test with feature drop
+    accuracy, confusion, report = evaluate_model(best_model_with_feature_drop, X_test_with_best, y_test)
     print(f"{best_name} Test Accuracy: {accuracy}")
     print(f"Confusion Matrix:\n{confusion}")
     print(f"Classification Report:\n{report}")
