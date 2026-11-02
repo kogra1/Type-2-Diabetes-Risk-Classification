@@ -1,101 +1,100 @@
-from load_data import load_nhanes, TARGET, clean_data
-import numpy as np
-import pandas as pd
-from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier, StackingClassifier, BaggingClassifier, AdaBoostClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.utils.class_weight import compute_sample_weight
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-import matplotlib.pyplot as plt
+
+def name_models(models):
+    """
+    Returns the models as ("name", model) pairs, because scikit-learn needs a unique name for each one.
+    """
+    return [m if isinstance(m, tuple) else (f"{type(m).__name__}_{i}", m) for i, m in enumerate(models)]
+
+def train(model, X_train, y_train, balanced):
+    """
+    Trains a model. balanced weights the classes so the rarer ones count as much during training.
+    Returns the trained model.
+    """
+    if balanced:
+        return model.fit(X_train, y_train, sample_weight=compute_sample_weight("balanced", y_train))
+    return model.fit(X_train, y_train)
+
+def create_ensemble(models, X_train, y_train, method="soft", balanced=True):
+    """
+    Combines different models into one ensemble and trains it.
+    models: a list of models, or of ("name", model) pairs.
+    method: "soft" (averages probabilities), "hard" (majority vote),
+            or "stacking" (a logistic regression learns to combine the models).
+    Returns the trained ensemble.
+    """
+    named = name_models(models)
+
+    if method in ("soft", "hard"):
+        ensemble = VotingClassifier(named, voting=method)
+    elif method == "stacking":
+        ensemble = StackingClassifier(named, final_estimator=LogisticRegression(max_iter=1000), cv=5)
+    else:
+        raise ValueError(f"Unknown method '{method}': use 'soft', 'hard' or 'stacking'.")
+    return train(ensemble, X_train, y_train, balanced)
+
+def wrap_models(models, wrap, X_train, y_train, balanced):
+    """
+    Wraps each model with wrap. One model is trained on its own, several are combined by soft voting.
+    Returns the trained ensemble.
+    """
+    models = models if isinstance(models, list) else [models]
+    wrapped = [(name, wrap(model)) for name, model in name_models(models)]
+
+    if len(wrapped) == 1:
+        return train(wrapped[0][1], X_train, y_train, balanced)
+    return create_ensemble(wrapped, X_train, y_train, method="soft", balanced=balanced)
+
+def create_bagging(models, X_train, y_train, n_estimators=10, balanced=True, seed=42):
+    """
+    Bagging: trains n_estimators copies of a model, each on a random sample of rows, then combines them.
+    Suits models that overfit on their own, such as deep trees and neural networks.
+    models: one model, or a list of models to bag separately and combine by soft voting.
+    Returns the trained ensemble.
+    """
+    return wrap_models(models, lambda m: BaggingClassifier(m, n_estimators=n_estimators, random_state=seed),
+                       X_train, y_train, balanced)
+
+def create_boosting(models, X_train, y_train, n_estimators=100, learning_rate=0.5, balanced=True, seed=42):
+    """
+    Boosting (AdaBoost): trains n_estimators copies of a model in sequence, each one focusing on
+    the rows the previous ones got wrong. Suits weak models, such as shallow decision trees.
+    The model must support sample weights, which rules out KNN.
+    models: one model, or a list of models to boost separately and combine by soft voting.
+    Returns the trained ensemble.
+    """
+    return wrap_models(models, lambda m: AdaBoostClassifier(m, n_estimators=n_estimators, learning_rate=learning_rate, random_state=seed),
+                       X_train, y_train, balanced)
+
+def make_models():
+    """
+    Returns the models to compare and combine, as ("name", model) pairs.
+    """
+    return [
+        ("rf", RandomForestClassifier(n_estimators=100, random_state=42)),
+        ("lr", LogisticRegression(random_state=42)),
+        ("dt", DecisionTreeClassifier(random_state=42)),
+        ("xgb", XGBClassifier(random_state=42)),
+    ]
 
 def base_models(X_train, y_train, X_test):
-    models = []
-    models.append(("rf", RandomForestClassifier(n_estimators=100, random_state=42)))
-    models.append(("lr", LogisticRegression(random_state=42)))
-    models.append(("dt", DecisionTreeClassifier(random_state=42)))
-    models.append(("xgb", XGBClassifier(random_state=42)))
+    models = make_models()
 
     for name, model in models:
         model.fit(X_train, y_train)
     return [model.predict(X_test) for _, model in models]
 
 def hard_voting_ensemble(X_train, y_train, X_test):
-    # Create a hard voting ensemble model
-    ensemble_model = VotingClassifier(estimators=[
-        ("rf", RandomForestClassifier(n_estimators=100, random_state=42)),
-        ("lr", LogisticRegression(random_state=42)),
-        ("dt", DecisionTreeClassifier(random_state=42)),
-        ("xgb", XGBClassifier(random_state=42))
-    ], voting="hard")   
-
-    # Fit the ensemble model
-    ensemble_model.fit(X_train, y_train)
-
-    # Make predictions
-    y_pred = ensemble_model.predict(X_test)
-    return y_pred
+    return create_ensemble(make_models(), X_train, y_train, method="hard", balanced=False).predict(X_test)
 
 def soft_voting_ensemble(X_train, y_train, X_test):
-    # Create a soft voting ensemble model
-    ensemble_model = VotingClassifier(estimators=[
-        ("rf", RandomForestClassifier(n_estimators=100, random_state=42)),
-        ("lr", LogisticRegression(random_state=42)),
-        ("dt", DecisionTreeClassifier(random_state=42)),
-        ("xgb", XGBClassifier(random_state=42))
-    ], voting="soft")
-
-    # Fit the ensemble model
-    ensemble_model.fit(X_train, y_train)
-
-    # Make predictions
-    y_pred = ensemble_model.predict(X_test)
-    return y_pred
+    return create_ensemble(make_models(), X_train, y_train, method="soft", balanced=False).predict(X_test)
 
 def evaluate_model(y_true, y_pred):
     accuracy = accuracy_score(y_true, y_pred)
     return accuracy
-
-
-def main():
-    # Load the data
-    data = load_nhanes()
-
-    data = clean_data(data)
-
-    # Preprocess the data
-    X = data.drop(columns=TARGET)
-    y = data[TARGET]
-
-    # Split the data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Train and evaluate base models
-    base_predictions = base_models(X_train, y_train, X_test)
-
-    plt.figure(figsize=(10, 6))
-    model_names = ["Random Forest", "Logistic Regression", "Decision Tree", "XGBoost"]
-    for i, predictions in enumerate(base_predictions):
-        accuracy = evaluate_model(y_test, predictions)
-        print(f"{model_names[i]} Accuracy: {accuracy}")
-        plt.bar(model_names[i], accuracy)
-
-    # Train and evaluate hard voting ensemble
-    hard_voting_predictions = hard_voting_ensemble(X_train, y_train, X_test)
-    hard_voting_accuracy = evaluate_model(y_test, hard_voting_predictions)
-    print(f"Hard Voting Ensemble Accuracy: {hard_voting_accuracy}")
-
-    # Train and evaluate soft voting ensemble
-    soft_voting_predictions = soft_voting_ensemble(X_train, y_train, X_test)
-    soft_voting_accuracy = evaluate_model(y_test, soft_voting_predictions)
-    print(f"Soft Voting Ensemble Accuracy: {soft_voting_accuracy}")
-
-    # Plot the ensemble model performance
-
-    plt.bar(["Hard Voting", "Soft Voting"], [hard_voting_accuracy, soft_voting_accuracy])
-    plt.ylabel("Accuracy")
-    plt.title("Ensemble Model Performance")
-    plt.show()
-
-if __name__ == "__main__":
-    main()

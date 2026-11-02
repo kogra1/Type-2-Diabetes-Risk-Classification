@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier, VotingClassifier, StackingClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, precision_score, recall_score, f1_score
 from load_data import load_nhanes, TARGET, NUMERIC_COLS, BINARY_COLS
-from sklearn.utils.class_weight import compute_sample_weight
+from ensemble import create_ensemble, create_bagging, create_boosting
 from xgboost import XGBClassifier
 
 
@@ -78,7 +78,7 @@ def feed_forward_neural_network(X_train, y_train, hidden_layer_sizes, activation
 
 def base_models():
     """
-    Trains multiple base models and returns their predictions on the test set.
+    Returns the untrained base models to combine, as ("name", model) pairs.
     """
     return[
         ("rf", RandomForestClassifier(n_estimators=300, min_samples_split=5, min_samples_leaf=2, random_state=SEED)),
@@ -86,31 +86,12 @@ def base_models():
         ("xgb", XGBClassifier(n_estimators=200, max_depth=3, learning_rate=0.05, random_state=SEED))
     ]
 
-def soft_voting_ensemble(X_train, y_train):
+def regularized_network():
     """
-    Trains a soft voting ensemble model and returns its predictions on the test set.
+    Returns an untrained feed-forward neural network with L2 regularization and early stopping.
     """
-    soft_model = VotingClassifier(base_models(), voting="soft")
-    soft_model.fit(X_train, y_train, sample_weight=compute_sample_weight(class_weight="balanced", y=y_train))
-    
-    return soft_model
-
-def hard_voting_ensemble(X_train, y_train):
-    """
-    Trains a hard voting ensemble model and returns its predictions on the test set.
-    """
-    hard_model = VotingClassifier(base_models(), voting="hard")
-    hard_model.fit(X_train, y_train, sample_weight=compute_sample_weight(class_weight="balanced", y=y_train))
-    return hard_model
-
-def stacking_ensemble(X_train, y_train):
-    """
-    Trains a stacking ensemble model and returns its predictions on the test set.
-    """
-    model = StackingClassifier(base_models(), final_estimator=LogisticRegression(max_iter=1000), cv=5)
-    model.fit(X_train, y_train, sample_weight=compute_sample_weight("balanced", y_train))
-
-    return model
+    return MLPClassifier(hidden_layer_sizes=(64,), alpha=1.0, early_stopping=True,
+                         max_iter=1000, random_state=SEED)
 
 def evaluate_model(model, X_test, y_test):
     """
@@ -203,9 +184,12 @@ def main():
         ("SVM (rbf, C=1)", svm_classifier(X_train, y_train, kernel="rbf", C=1)),
         ("SVM (rbf, C=10)", svm_classifier(X_train, y_train, kernel="rbf", C=10)),
         #ensemble models
-        ("Soft voting ensemble", soft_voting_ensemble(X_train, y_train)),
-        ("Hard voting ensemble", hard_voting_ensemble(X_train, y_train)),
-        ("Stacking ensemble", stacking_ensemble(X_train, y_train)),
+        ("Soft voting ensemble", create_ensemble(base_models(), X_train, y_train)),
+        ("Soft voting ensemble network", create_ensemble(base_models() + [("ensemble network", regularized_network())], X_train, y_train)),
+        ("Hard voting ensemble", create_ensemble(base_models(), X_train, y_train, method="hard")),
+        ("Stacking ensemble", create_ensemble(base_models(), X_train, y_train, method="stacking")),
+        ("ensemble network", create_bagging(regularized_network(), X_train, y_train, seed=SEED)),
+        ("Boosted trees (depth=3)", create_boosting(DecisionTreeClassifier(max_depth=3, random_state=SEED), X_train, y_train, seed=SEED)),
         # FFNN: 1 hidden layer with 100 neurons, ReLU activation
         ("FFNN (100, relu)", feed_forward_neural_network(X_train, y_train, hidden_layer_sizes=(100,), activation="relu", max_iter=1000)),
     ]
@@ -238,14 +222,17 @@ def main():
     print(final_report.to_string())
 
     # ===== Step 7: Final Model Selection =====
-    # Picks the model with the best validation F1-score (macro)
-    best_name = final_report["F1-Score"].idxmax()
+    # Picks the model with the best validation F1-score (macro).
+    # Models within 0.005 of the best count as tied, and the tie goes to the higher validation accuracy.
+    tied = final_report[final_report["F1-Score"] >= final_report["F1-Score"].max() - 0.005]
+    best_name = tied["Validation Accuracy"].idxmax()
     best_model = dict(models)[best_name]
     print(f"Best model on the validation set: {best_name}")
     """
     Macro F1 is used instead of accuracy because the classes are unbalanced (58% low risk):
     a model that mostly predicts "low" can get a good accuracy while missing most of the
     prediabetes and diabetes cases. Macro F1 weights the three classes equally.
+    A gap under 0.005 is too small to mean much on 917 validation rows, so accuracy settles it.
     """
 
     # ===== Step 8: Final Test Evaluation =====

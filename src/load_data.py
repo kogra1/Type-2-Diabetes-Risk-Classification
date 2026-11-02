@@ -15,13 +15,23 @@ import pyreadstat
 URL = "https://wwwn.cdc.gov/Nchs/Data/Nhanes/Public/2021/DataFiles/"
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "nhanes_2021_2023")
 FILES = ["DEMO_L", "GHB_L", "DIQ_L", "BMX_L", "BPXO_L", "DR1TOT_L",
-         "PAQ_L", "SMQ_L", "SLQ_L", "ALQ_L", "MCQ_L"]
+         "PAQ_L", "SMQ_L", "SLQ_L", "ALQ_L", "MCQ_L",
+         "HUQ_L", "BPQ_L", "WHQ_L", "KIQ_U_L", "DPQ_L",   # health history
+         "HDL_L", "TCHOL_L", "HSCRP_L", "CBC_L"]          # blood tests
 
 TARGET = "risk"   # 0 = low, 1 = prediabetes, 2 = diabetes
 NUMERIC_COLS = ["RIDAGEYR", "INDFMPIR", "BMXBMI", "waist_height_ratio", "sbp_mean", "dbp_mean",
                 "DR1TKCAL", "DR1TCARB", "DR1TSUGR", "DR1TFIBE", "DR1TTFAT", "DR1TSFAT",
-                "equivalent_min", "PAD680", "SLD012", "smoking_status", "alcohol_per_week"]
-BINARY_COLS = ["RIAGENDR", "ALQ111", "cardio_history"]
+                "equivalent_min", "PAD680", "SLD012", "smoking_status", "alcohol_per_week",
+                # demographics and body
+                "DMDEDUC2", "BMXWT", "BMXHT", "BMXHIP", "BMXARMC", "BMXLEG", "pulse_mean", "SLD013",
+                # health history
+                "HUQ010", "KIQ481", "WHD050", "phq9",
+                # blood tests
+                "LBDHDD", "LBXTC", "LBXHSCRP", "LBXWBCSI", "LBXHGB", "LBXRDW", "LBXMCVSI", "LBXPLTSI", "LBXNEPCT"]
+BINARY_COLS = ["RIAGENDR", "ALQ111", "cardio_history",
+               "race_mexican", "race_other_hispanic", "race_white", "race_black", "race_asian", "race_other",
+               "DMDBORN4", "BPQ020", "BPQ080", "MCQ160A", "MCQ160L", "MCQ160M", "KIQ022", "WHQ070"]
 
 
 def read_file(name):
@@ -34,7 +44,7 @@ def read_file(name):
         os.makedirs(DATA_DIR, exist_ok=True)
         urllib.request.urlretrieve(URL + name + ".xpt", path)
     df, _ = pyreadstat.read_xport(path, encoding="windows-1252")
-    return df
+    return df.drop(columns="WTPH2YR", errors="ignore")   # unused weight repeated in every lab file
 
 
 def minutes_per_week(times, unit, minutes):
@@ -51,10 +61,7 @@ def clean_data(df):
     Returns the cleaned DataFrame.
     """
     # Remove rows with missing values in critical columns
-    critical_columns = ["RIDAGEYR", "INDFMPIR", "BMXBMI", "waist_height_ratio", "sbp_mean", "dbp_mean",
-                        "DR1TKCAL", "DR1TCARB", "DR1TSUGR", "DR1TFIBE", "DR1TTFAT", "DR1TSFAT",
-                        "equivalent_min", "PAD680", "SLD012", "smoking_status", "alcohol_per_week",
-                        "RIAGENDR", "ALQ111", "cardio_history"]
+    critical_columns = NUMERIC_COLS + BINARY_COLS
     df_cleaned = df.dropna(subset=critical_columns)
     return df_cleaned
 
@@ -74,7 +81,9 @@ def load_nhanes():
 
     # 3. Features
     X = df[["RIDAGEYR", "INDFMPIR", "BMXBMI", "SLD012",
-            "DR1TKCAL", "DR1TCARB", "DR1TSUGR", "DR1TFIBE", "DR1TTFAT", "DR1TSFAT"]].copy()
+            "DR1TKCAL", "DR1TCARB", "DR1TSUGR", "DR1TFIBE", "DR1TTFAT", "DR1TSFAT",
+            "BMXWT", "BMXHT", "BMXHIP", "BMXARMC", "BMXLEG", "SLD013",
+            "LBDHDD", "LBXTC", "LBXHSCRP", "LBXWBCSI", "LBXHGB", "LBXRDW", "LBXMCVSI", "LBXPLTSI", "LBXNEPCT"]].copy()
     X["RIAGENDR"] = df.RIAGENDR.map({1: 0, 2: 1})                      # 0 = male, 1 = female
     X["waist_height_ratio"] = df.BMXWAIST / df.BMXHT
     X["sbp_mean"] = df[["BPXOSY1", "BPXOSY2", "BPXOSY3"]].mean(axis=1)  # mean of 3 readings
@@ -100,6 +109,26 @@ def load_nhanes():
     heart = df[["MCQ160B", "MCQ160C", "MCQ160D", "MCQ160E", "MCQ160F"]]
     X["cardio_history"] = np.select([(heart == 1).any(axis=1), (heart == 2).all(axis=1)],
                                     [1, 0], default=np.nan)
+
+    # Race/ethnicity: one 0/1 column per group
+    race = {1: "race_mexican", 2: "race_other_hispanic", 3: "race_white",
+            4: "race_black", 6: "race_asian", 7: "race_other"}
+    for code, name in race.items():
+        X[name] = (df.RIDRETH3 == code).astype(int)
+
+    # Yes/no answers: 1 = yes, 0 = no (DMDBORN4: 1 = born in the US)
+    for c in ["DMDBORN4", "BPQ020", "BPQ080", "MCQ160A", "MCQ160L", "MCQ160M", "KIQ022", "WHQ070"]:
+        X[c] = df[c].map({1: 1, 2: 0})
+
+    # Ordered answers: education (1-5), general health (1 = excellent, 5 = poor), night urination (0-5)
+    for c in ["DMDEDUC2", "HUQ010", "KIQ481"]:
+        X[c] = df[c].replace([7, 9], np.nan)
+    X["WHD050"] = df.WHD050.replace([7777, 9999], np.nan)               # weight a year ago (pounds)
+    X["pulse_mean"] = df[["BPXOPLS1", "BPXOPLS2", "BPXOPLS3"]].mean(axis=1)
+
+    # Depression score (PHQ-9): 9 answers of 0-3 added up, NaN unless all 9 are answered
+    phq = df[[f"DPQ0{i}0" for i in range(1, 10)]].replace([7, 9], np.nan)
+    X["phq9"] = phq.sum(axis=1, min_count=9)
 
     # 4. Label: HbA1c >= 6.5 or diagnosed -> 2, HbA1c 5.7-6.4 or "borderline" -> 1, else 0
     X = X[NUMERIC_COLS + BINARY_COLS].astype(float)
